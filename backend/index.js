@@ -1,63 +1,91 @@
-import dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
-import { createClient } from "redis";
-import { Client, Databases } from "node-appwrite";
-import envt_imports from './envt_imports/envt_imports.js'; 
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import { createClient } from 'redis';
+import envt_imports from './envt_imports/envt_imports.js';
 
-// Load environment variables
+import usersRouter       from './routes/users.js';
+import appointmentsRouter from './routes/appointments.js';
+import finalizedRouter   from './routes/finalized.js';
+
 dotenv.config();
 
-const app = express();
+const app  = express();
 const PORT = 5001;
 
-console.log('Environment Variables:', process.env.APPWRITE_URL);
+// MongoDB connection
+mongoose
+  .connect(envt_imports.mongodbUri)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
+// Redis Client (optional — app works without it)
+let redisClient = null;
+let redisReady  = false;
 
-// Appwrite Configuration
-const appwriteClient = new Client();
-appwriteClient
-    .setEndpoint(envt_imports.appwriteUrl) // Appwrite endpoint
-    .setProject(envt_imports.appwriteProjectId) // Project ID
-    .setKey(envt_imports.appwriteApiKey); // API key
-
-const databases = new Databases(appwriteClient);
-
-// Redis Client Configuration
-const redisClient = createClient({
-    url: `redis://${envt_imports.redisHost}:${envt_imports.redisPort || 6379}`,
+const redisRaw = createClient({
+  url: `redis://${envt_imports.redisHost || '127.0.0.1'}:${envt_imports.redisPort || 6379}`,
 });
-redisClient.on("error", (err) => console.error("Redis Client Error", err));
-redisClient.connect().then(() => console.log("Redis connected"));
+
+redisRaw.on('error', () => {
+  // Suppress repeated error logs — Redis is optional
+  redisReady = false;
+});
+
+redisRaw
+  .connect()
+  .then(() => {
+    redisClient = redisRaw;
+    redisReady  = true;
+    console.log('Redis connected (caching enabled)');
+  })
+  .catch(() => {
+    console.warn('Redis unavailable — running without cache');
+  });
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173' })); // Allow cross-origin requests
-app.use(express.json()); // Parse JSON request bodies
+app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(express.json());
 
-// Cache Middleware
+// Cache Middleware (skipped gracefully when Redis is not available)
 const cache = async (req, res, next) => {
-    const key = req.originalUrl;
+  if (!redisReady) return next();
 
-    try {
-        const cachedData = await redisClient.get(key);
-        if (cachedData) {
-            console.log("Cache hit for:", key);
-            return res.json(JSON.parse(cachedData)); // Return cached data
-        }
-        console.log("Cache miss for:", key);
-        next(); // Proceed to fetch fresh data if not cached
-    } catch (error) {
-        console.error("Redis error:", error.message);
-        next(); // Continue even if Redis fails
+  const key = req.originalUrl;
+  try {
+    const cached = await redisClient.get(key);
+    if (cached) {
+      return res.json(JSON.parse(cached));
     }
+
+    const originalJson = res.json.bind(res);
+    res.json = (data) => {
+      redisClient.setEx(key, 60, JSON.stringify(data)).catch(() => {});
+      return originalJson(data);
+    };
+
+    next();
+  } catch {
+    next();
+  }
 };
 
-app.get('/test', (req, res) => {
-    res.send('Backend is working!');
+// Routes
+app.get('/test', (req, res) => res.send('Backend is working!'));
+
+app.use('/users',        cache, usersRouter);
+app.use('/appointments', cache, appointmentsRouter);
+app.use('/finalized',    cache, finalizedRouter);
+
+// Invalidate cache on writes
+app.use((req, res, next) => {
+  if (redisReady && ['POST', 'PUT', 'DELETE'].includes(req.method)) {
+    redisClient.flushDb().catch(() => {});
+  }
+  next();
 });
 
-
-
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
