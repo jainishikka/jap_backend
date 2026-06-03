@@ -25,10 +25,11 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchName, setSearchName] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
   const fetchActivePatients = async (params = {}) => {
     try {
       setIsLoading(true);
-      const response = await axios.get("/api/appointments", { params });
+      const response = await axios.get(`${apiUrl}/appointments`, { params });
       setPatients(response.data.documents || []);
     } catch (error) {
       console.error("Error fetching active patients:", error);
@@ -63,7 +64,7 @@ const AdminDashboard = () => {
       const { _id, __v, createdAt, updatedAt, AppointmentDate, ...dataToMove } =
         patient;
 
-      await axios.post("/api/finalized", {
+      await axios.post(`${apiUrl}/finalized`, {
         appointmentId: _id,
         AppointmentDate: AppointmentDate || null,
         ...dataToMove,
@@ -156,7 +157,7 @@ const AdminDashboard = () => {
       if ("Payment" in dataToUpdate)
         dataToUpdate.Payment = Number(dataToUpdate.Payment) || 0;
 
-      const response = await axios.put(`/api/appointments/${id}`, dataToUpdate);
+      const response = await axios.put(`${apiUrl}/appointments/${id}`, dataToUpdate);
 
       setPatients((prev) =>
         prev.map((patient) =>

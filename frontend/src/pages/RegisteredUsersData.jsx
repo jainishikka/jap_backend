@@ -42,7 +42,7 @@ const RegisteredUsersData = () => {
 
     try {
       while (hasMore) {
-        const response = await axios.get("/api/users", { params: { limit, offset } });
+        const response = await axios.get("/users", { params: { limit, offset } });
         const docs = response.data.documents || [];
         if (docs.length > 0) {
           allUsers = [...allUsers, ...docs];

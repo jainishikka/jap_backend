@@ -18,6 +18,8 @@ const Signup = () => {
   const [copyMessage, setCopyMessage] = useState("");
   const navigate = useNavigate();
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const formatDateForStorage = (dateString) => {
     if (!dateString) return null;
 
@@ -63,7 +65,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("/api/users", {
+      const response = await axios.post(`${apiUrl}/users`, {
         FirstName: firstName,
         LastName: lastName,
         PatientEmail: email || null,

@@ -22,7 +22,7 @@ const FinalData = () => {
       if (registrationSearch) params.regNumber  = registrationSearch;
       if (nameSearch)         params.name       = nameSearch;
 
-      const response = await axios.get("/api/finalized", { params });
+      const response = await axios.get("/finalized", { params });
       setFinalizedPatients(response.data.documents || []);
     } catch (error) {
       console.error("Error fetching finalized patients:", error);

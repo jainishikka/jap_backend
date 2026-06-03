@@ -8,6 +8,8 @@ const BookAppoEntry = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   const handleBookAppointment = async (e) => {
@@ -23,7 +25,7 @@ const BookAppoEntry = () => {
         return;
       }
 
-      await axios.get(`/api/users/by-reg/${trimmed}`);
+      await axios.get(`${apiUrl}/users/by-reg/${trimmed}`);
 
       navigate("/appointment-details", {
         state: { registrationNumber: trimmed },

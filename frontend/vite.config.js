@@ -11,13 +11,13 @@ export default defineConfig({
   },
   server: {
     historyApiFallback: true, // Ensures that SPA routing (React Router) works on page reload
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5001',
-        changeOrigin: true, 
-        rewrite: (path) => path.replace(/^\/api/, ''), 
-      },
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://localhost:5001',
+    //     changeOrigin: true, 
+    //     rewrite: (path) => path.replace(/^\/api/, ''), 
+    //   },
+    // },
   },
   resolve: {
     alias: {

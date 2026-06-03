@@ -10,11 +10,13 @@ const UserDashboard = ({ registrationNumber }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
         const response = await axios.get(
-          `/api/users/by-reg/${registrationNumber}`,
+          `${apiUrl}/users/by-reg/${registrationNumber}`,
         );
         if (response.data) {
           setPatientName(response.data.PatientName);
@@ -34,7 +36,7 @@ const UserDashboard = ({ registrationNumber }) => {
     setErrorMessage("");
 
     try {
-      await axios.post("/api/appointments/upsert", {
+      await axios.post(`${apiUrl}/appointments/upsert`, {
         PatientProblem: patientProblem,
         RegistrationNumber: registrationNumber,
         PatientName: patientName,

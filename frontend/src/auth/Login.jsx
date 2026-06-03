@@ -12,6 +12,8 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -26,7 +28,7 @@ const Login = () => {
           return;
         }
 
-        const response = await axios.get(`/api/users/by-reg/${trimmed}`);
+        const response = await axios.get(`${apiUrl}/users/by-reg/${trimmed}`);
         if (response.data) {
           navigate("/user-dashboard", {
             state: { registrationNumber: trimmed },
