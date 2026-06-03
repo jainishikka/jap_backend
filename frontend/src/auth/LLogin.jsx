@@ -9,8 +9,8 @@ const LLogin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const ADMIN_PASSWORD = "password"; // Replace with your real admin password
-  
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -19,6 +19,7 @@ const LLogin = () => {
     try {
       if (password === ADMIN_PASSWORD) {
         // Admin login success
+        sessionStorage.setItem("role", "admin");
         navigate("/admin-dashboard"); // Redirect to admin dashboard
       } else {
         setError("Invalid admin password.");
@@ -35,12 +36,16 @@ const LLogin = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-blue-500">
       <div className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-8">
-          Doctor Login <br/><span className="text-blue-500">Jain Arogyam</span>
+          Doctor Login <br />
+          <span className="text-blue-500">Jain Arogyam</span>
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Doctor Password
             </label>
             <input

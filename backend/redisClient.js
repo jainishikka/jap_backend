@@ -20,19 +20,10 @@ redisClient.on("error", (err) => {
 });
 
 // Asynchronous function to connect to Redis
-const connectRedis = async () => {
-    try {
-        // Wait for Redis connection
-        await redisClient.connect();
-        console.log("Redis client connected.");
-    } catch (error) {
-        console.error("Error while connecting to Redis:", error.message);
-        process.exit(1);  // Exit if Redis connection fails, can be adjusted based on your needs
-    }
-};
-
-// Call the connectRedis function when this module is imported
-connectRedis();
+await redisClient.connect().catch(e => {
+    console.error("Failed to connect to Redis:", e);
+    process.exit(1);
+})
 
 // Export the Redis client for use in other files
 export default redisClient;

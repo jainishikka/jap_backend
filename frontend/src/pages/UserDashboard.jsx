@@ -13,7 +13,9 @@ const UserDashboard = ({ registrationNumber }) => {
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
-        const response = await axios.get(`/api/users/by-reg/${registrationNumber}`);
+        const response = await axios.get(
+          `/api/users/by-reg/${registrationNumber}`,
+        );
         if (response.data) {
           setPatientName(response.data.PatientName);
         }
@@ -33,14 +35,14 @@ const UserDashboard = ({ registrationNumber }) => {
 
     try {
       await axios.post("/api/appointments/upsert", {
-        PatientProblem:    patientProblem,
+        PatientProblem: patientProblem,
         RegistrationNumber: registrationNumber,
-        PatientName:       patientName,
-        AppointmentDate:   new Date().toISOString(),
-        Remarks:           "",
-        TreatmentDone:     "",
-        PaymentReceived:   false,
-        PackagePurchased:  false,
+        PatientName: patientName,
+        AppointmentDate: new Date().toISOString(),
+        Remarks: "",
+        TreatmentDone: "",
+        PaymentReceived: false,
+        PackagePurchased: false,
         RemainingSessions: 0,
       });
 
@@ -55,19 +57,30 @@ const UserDashboard = ({ registrationNumber }) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
       <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Hello, {patientName || "User"}!</h1>
-        <p className="text-gray-600 mb-6">Welcome! Please provide your details below.</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">
+          Hello, {patientName || "User"}!
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Welcome! Please provide your details below.
+        </p>
 
         {successMessage && (
-          <div className="bg-green-100 text-green-700 p-4 rounded-md mb-4 text-sm">{successMessage}</div>
+          <div className="bg-green-100 text-green-700 p-4 rounded-md mb-4 text-sm">
+            {successMessage}
+          </div>
         )}
         {errorMessage && (
-          <div className="bg-red-100 text-red-700 p-4 rounded-md mb-4 text-sm">{errorMessage}</div>
+          <div className="bg-red-100 text-red-700 p-4 rounded-md mb-4 text-sm">
+            {errorMessage}
+          </div>
         )}
 
         <form onSubmit={handleSubmitDetails}>
           <div className="mb-4">
-            <label htmlFor="patientProblem" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="patientProblem"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Patient Problem:
             </label>
             <textarea

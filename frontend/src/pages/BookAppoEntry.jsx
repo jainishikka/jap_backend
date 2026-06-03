@@ -33,7 +33,9 @@ const BookAppoEntry = () => {
         setError("No user found with this registration number.");
       } else {
         console.error("Error booking appointment:", err);
-        setError("An error occurred while booking the appointment. Please try again.");
+        setError(
+          "An error occurred while booking the appointment. Please try again.",
+        );
       }
     } finally {
       setLoading(false);
@@ -49,7 +51,10 @@ const BookAppoEntry = () => {
 
         <form onSubmit={handleBookAppointment} className="space-y-6">
           <div>
-            <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="registrationNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
               Registration Number
             </label>
             <input
@@ -64,7 +69,11 @@ const BookAppoEntry = () => {
 
           {loading && (
             <div className="flex justify-center py-4">
-              <FontAwesomeIcon icon={faSpinner} spin className="text-blue-500 text-3xl" />
+              <FontAwesomeIcon
+                icon={faSpinner}
+                spin
+                className="text-blue-500 text-3xl"
+              />
             </div>
           )}
 

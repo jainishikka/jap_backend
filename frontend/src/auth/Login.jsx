@@ -1,18 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-import PropTypes from "prop-types";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-const ADMIN_PASSWORD = "password";
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
-const Login = ({ asLogin }) => {
+const Login = () => {
   const [password, setPassword] = useState("");
-  const [registrationNumber, setRegistrationNumber] = useState("");
-  const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const [registrationNumber, setRegistrationNumber] = useState(localStorage.getItem("registrationNumber"));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -21,14 +20,6 @@ const Login = ({ asLogin }) => {
     setError("");
 
     try {
-      if (isAdminLogin) {
-        if (password === ADMIN_PASSWORD) {
-          asLogin("admin");
-          navigate("/admin-dashboard");
-        } else {
-          setError("Invalid admin password.");
-        }
-      } else {
         const trimmed = registrationNumber.trim();
         if (!trimmed) {
           setError("Registration Number is required.");
@@ -37,10 +28,10 @@ const Login = ({ asLogin }) => {
 
         const response = await axios.get(`/api/users/by-reg/${trimmed}`);
         if (response.data) {
-          asLogin("user", trimmed);
-          navigate("/user-dashboard", { state: { registrationNumber: trimmed } });
+          navigate("/user-dashboard", {
+            state: { registrationNumber: trimmed },
+          });
         }
-      }
     } catch (err) {
       if (err.response?.status === 404) {
         setError("No user found with this registration number.");
@@ -61,23 +52,12 @@ const Login = ({ asLogin }) => {
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          {isAdminLogin ? (
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Admin Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-              />
-            </div>
-          ) : (
-            <div>
-              <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="registrationNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Registration Number
               </label>
               <input
@@ -89,11 +69,14 @@ const Login = ({ asLogin }) => {
                 className="mt-1 block w-full rounded-lg border border-gray-300 bg-white shadow-sm hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
               />
             </div>
-          )}
 
           {loading && (
             <div className="flex justify-center py-4">
-              <FontAwesomeIcon icon={faSpinner} spin className="text-blue-500 text-3xl" />
+              <FontAwesomeIcon
+                icon={faSpinner}
+                spin
+                className="text-blue-500 text-3xl"
+              />
             </div>
           )}
 
@@ -129,8 +112,5 @@ const Login = ({ asLogin }) => {
   );
 };
 
-Login.propTypes = {
-  asLogin: PropTypes.func.isRequired,
-};
 
 export default Login;

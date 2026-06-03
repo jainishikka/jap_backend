@@ -63,9 +63,9 @@ router.put('/:id', async (req, res) => {
     } = req.body;
 
     if ('PackagePurchased' in dataToUpdate) dataToUpdate.PackagePurchased = Boolean(dataToUpdate.PackagePurchased);
-    if ('PaymentReceived'  in dataToUpdate) dataToUpdate.PaymentReceived  = Boolean(dataToUpdate.PaymentReceived);
+    if ('PaymentReceived' in dataToUpdate) dataToUpdate.PaymentReceived = Boolean(dataToUpdate.PaymentReceived);
     if ('RemainingSessions' in dataToUpdate) dataToUpdate.RemainingSessions = Number(dataToUpdate.RemainingSessions) || 0;
-    if ('Payment'          in dataToUpdate) dataToUpdate.Payment          = Number(dataToUpdate.Payment) || 0;
+    if ('Payment' in dataToUpdate) dataToUpdate.Payment = Number(dataToUpdate.Payment) || 0;
 
     const updated = await Appointment.findByIdAndUpdate(req.params.id, dataToUpdate, { new: true });
     if (!updated) return res.status(404).json({ error: 'Appointment not found' });
