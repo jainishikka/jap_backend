@@ -14,7 +14,8 @@ const Signup = () => {
     message: "",
     registrationNumber: null,
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);     
+  
   const [copyMessage, setCopyMessage] = useState("");
   const navigate = useNavigate();
 
