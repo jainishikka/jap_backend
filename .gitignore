@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build output (if using TypeScript or a build step)
+dist/
+build/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+
+# Runtime / process
+pids/
+*.pid
+*.seed
+
+# Coverage
+coverage/
+.nyc_output/

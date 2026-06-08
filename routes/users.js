@@ -6,7 +6,7 @@ const router = express.Router();
 // GET /users — fetch all registered users (paginated, sorted by createdAt desc)
 router.get('/', async (req, res) => {
   try {
-    const limit  = parseInt(req.query.limit)  || 100;
+    const limit = parseInt(req.query.limit) || 100;
     const offset = parseInt(req.query.offset) || 0;
 
     const users = await User.find()
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
   try {
     const { FirstName, LastName, PatientEmail, MobileNumber, Gender, Date_Of_Birth } = req.body;
 
-    const patientName       = `${FirstName} ${LastName}`.trim();
+    const patientName = `${FirstName} ${LastName}`.trim();
     const uniqueCombination = `${FirstName}|${LastName}|${PatientEmail || 'null'}|${MobileNumber || 'null'}`;
 
     // Duplicate check
@@ -57,8 +57,8 @@ router.post('/', async (req, res) => {
       FirstName,
       LastName,
       PatientName: patientName,
-      PatientEmail:  PatientEmail  || null,
-      MobileNumber:  MobileNumber  || null,
+      PatientEmail: PatientEmail || null,
+      MobileNumber: MobileNumber || null,
       Gender,
       RegistrationNumber: registrationNumber,
       Date_Of_Birth: Date_Of_Birth || null,
