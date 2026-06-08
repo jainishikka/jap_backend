@@ -28,20 +28,20 @@ const App = () => {
         <Route path="/" element={<LLogin />} />
         {/* <ProtectedRoute> */}
           <Route path="/signup" element={<ProtectedRoute><Signup /></ProtectedRoute>} />
-          <Route path="/finalData" element={<FinalData />} />
-          <Route path="/bookAppointment" element={<BookAppoEntry />} />
+          <Route path="/finalData" element={<ProtectedRoute><FinalData /></ProtectedRoute>} />
+          <Route path="/bookAppointment" element={<ProtectedRoute><BookAppoEntry /></ProtectedRoute>} />
           {/* Login Route */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<ProtectedRoute><Login /></ProtectedRoute>} />
 
           {/* Protected Routes */}
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route
             path="/user-dashboard"
-            element={<UserDashboard registrationNumber={regisNumber} />}
+            element={<ProtectedRoute><UserDashboard registrationNumber={regisNumber} /></ProtectedRoute>}
           />
           <Route
             path="/registered-users-data"
-            element={<RegisteredUsersData />}
+            element={<ProtectedRoute><RegisteredUsersData /></ProtectedRoute>}
           />
         {/* </ProtectedRoute> */}
         {/* Catch-All Redirect */}
