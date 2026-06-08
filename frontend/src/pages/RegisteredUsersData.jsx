@@ -17,7 +17,7 @@ const RegisteredUsersData = () => {
   const [searchMobile, setSearchMobile] = useState("");
   const [searchName, setSearchName] = useState("");
   const navigate = useNavigate();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   // Filter by name/mobile whenever inputs change
   useEffect(() => {
     const lowerMobile = searchMobile.toLowerCase();
@@ -42,7 +42,7 @@ const RegisteredUsersData = () => {
 
     try {
       while (hasMore) {
-        const response = await axios.get("/users", { params: { limit, offset } });
+        const response = await axios.get(`${apiUrl}/users`, { params: { limit, offset } });
         const docs = response.data.documents || [];
         if (docs.length > 0) {
           allUsers = [...allUsers, ...docs];

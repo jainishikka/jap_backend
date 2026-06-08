@@ -25,7 +25,7 @@ mongoose
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-// Middleware
+// Middlewares
 app.use(cors({ origin: ['http://localhost:5173', 'https://jap-fullstack.vercel.app' ]}));
 app.use(express.json());
 
@@ -39,7 +39,7 @@ app.use('/finalized',    finalizedRouter);
 // deploy frontend and backend together-
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 // app.get('/{*path}', (req, res) => {
 //   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));

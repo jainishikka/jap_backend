@@ -12,8 +12,10 @@ const FinalData = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsPerPage] = useState(10);
-
+  
+  const apiUrl = import.meta.env.VITE_API_URL;
   const fetchFinalizedPatients = async () => {
+
     try {
       setIsLoading(true);
       const params = {};
@@ -22,7 +24,7 @@ const FinalData = () => {
       if (registrationSearch) params.regNumber  = registrationSearch;
       if (nameSearch)         params.name       = nameSearch;
 
-      const response = await axios.get("/finalized", { params });
+      const response = await axios.get(`${apiUrl}/finalized`, { params });
       setFinalizedPatients(response.data.documents || []);
     } catch (error) {
       console.error("Error fetching finalized patients:", error);
