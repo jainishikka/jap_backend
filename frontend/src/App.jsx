@@ -1,7 +1,6 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./auth/Login";
@@ -18,36 +17,58 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import "./index.css";
 
+/* ------------------------------------------------------------------ */
+/*  Route map                                                          */
+/*  - "/" is the only public route: the doctor login (LLogin).         */
+/*  - Every other screen requires role === "admin" in sessionStorage,  */
+/*    i.e. the clinic device must be unlocked with the doctor password */
+/*    before patients or staff can use any screen.                     */
+/*  - Unknown URLs land on "/", where ProtectedRoute + LLogin decide   */
+/*    what happens next.                                               */
+/* ------------------------------------------------------------------ */
 const App = () => {
-  const [regisNumber, setRegistrationNumber] = useState(localStorage.getItem("registrationNumber"));
-
   return (
     <div>
       <Routes>
-        {/* Public Routes */}
+        {/* Public: doctor login */}
         <Route path="/" element={<LLogin />} />
-        {/* <ProtectedRoute> */}
-          <Route path="/signup" element={<ProtectedRoute><Signup /></ProtectedRoute>} />
-          <Route path="/finalData" element={<ProtectedRoute><FinalData /></ProtectedRoute>} />
-          <Route path="/bookAppointment" element={<ProtectedRoute><BookAppoEntry /></ProtectedRoute>} />
-          {/* Login Route */}
-          <Route path="/login" element={<ProtectedRoute><Login /></ProtectedRoute>} />
 
-          {/* Protected Routes */}
-          <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-          <Route
-            path="/user-dashboard"
-            element={<ProtectedRoute><UserDashboard registrationNumber={regisNumber} /></ProtectedRoute>}
-          />
-          <Route
-            path="/registered-users-data"
-            element={<ProtectedRoute><RegisteredUsersData /></ProtectedRoute>}
-          />
-        {/* </ProtectedRoute> */}
-        {/* Catch-All Redirect */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Everything below requires login */}
+        <Route
+          path="/admin-dashboard"
+          element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>}
+        />
+        <Route
+          path="/registered-users-data"
+          element={<ProtectedRoute allowedRole="admin"><RegisteredUsersData /></ProtectedRoute>}
+        />
+        <Route
+          path="/finalData"
+          element={<ProtectedRoute allowedRole="admin"><FinalData /></ProtectedRoute>}
+        />
+        <Route
+          path="/bookAppointment"
+          element={<ProtectedRoute allowedRole="admin"><BookAppoEntry /></ProtectedRoute>}
+        />
+        <Route
+          path="/login"
+          element={<ProtectedRoute allowedRole="admin"><Login /></ProtectedRoute>}
+        />
+        <Route
+          path="/signup"
+          element={<ProtectedRoute allowedRole="admin"><Signup /></ProtectedRoute>}
+        />
+        <Route
+          path="/user-dashboard"
+          element={<ProtectedRoute allowedRole="admin"><UserDashboard /></ProtectedRoute>}
+        />
+
+        {/* Catch-all: unknown URLs go to the login gate */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <ToastContainer />
+
+      {/* Required for all toast.success / toast.error calls app-wide */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
